@@ -1,0 +1,5 @@
+.hard_module A 50 40
+.hard_module B 60 50
+.soft_module C 60 50
+.soft_module D 50 40
+.pins 3 2 3
