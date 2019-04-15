@@ -30,26 +30,30 @@ void parser(string filename, unordered_map<string, HWpair> & mod_map)
 {
 	string mod_text;
 	ifstream input;
-	vector<string> components;
+	
 	input.open(filename);
 
 	if (!input.is_open()) {
-		throw invalid_argument{ "error in opening file\n" };
+		cout<< "error in opening file\n" ;
 	}
 	while (!input.eof())
 	{
+		vector<string> components;
 		getline(input, mod_text);
 		split(mod_text, components);
 		HWpair temp;
-		temp.height = stoi(components.at(3));
-		temp.width = stoi(components.at(4));
-		mod_map[components.at(2)] = temp;
+		temp.height = stoi(components.at(2));
+		temp.width = stoi(components.at(3));
+		mod_map[components.at(1)] = temp;
 	}
 }
 int main()
 {
-	string file_name;
+	string file_name = "modules.txt";
 	unordered_map < string, HWpair> module_map;
 	parser(file_name, module_map);
-
+	for (auto it = module_map.begin(); it != module_map.end(); it++)
+		cout <<  it->first << "," << it->second.height << "," << it->second.width << endl;
+	system("pause");
+	return 0;
 }
