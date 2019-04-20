@@ -63,7 +63,7 @@ void parser(string filename, unordered_map<int, HardR> & hard_map, unordered_map
 		getline(input, mod_text);
 		split(mod_text, components);
 
-		if (components.at(0) == ".hard_module")
+		if (components.at(0) == ".hard_module") //hard_modules
 		{
 			HardR temp;
 			temp.name = components.at(1);
@@ -72,7 +72,7 @@ void parser(string filename, unordered_map<int, HardR> & hard_map, unordered_map
 			hard_map[hard_counter] = temp;
 			hard_counter++;
 		}
-		else if (components.at(0) == ".soft_module")
+		else if (components.at(0) == ".soft_module")  //soft_modules
 		{
 			SoftR temp;
 			temp.name = components.at(1);
@@ -80,7 +80,7 @@ void parser(string filename, unordered_map<int, HardR> & hard_map, unordered_map
 			soft_map[soft_counter] = temp;
 			soft_counter++;
 		}
-		else if (components.at(0) == ".pins")
+		else if (components.at(0) == ".pins")  //I/O pads
 		{
 			pin_count = stoi(components.at(1));
 			pin_width = stoi(components.at(2));
@@ -99,84 +99,7 @@ void diePerimeter(int count, int width, int height, int & outer_dim, int & inner
 	outer_dim = inner_dim + 2 * max_dim;
 
 }
-void HardRectangles(unordered_map < int, HardR> hmp , unordered_map < int, SoftR> smp , int pin_count , int pin_height ,int pin_width , int hard_count , int soft_ount) {
-	ofstream myfile;
-	myfile.open("example.txt");
-	int area = 0;
-	int W;
-	bool core_const = false;
-	bool die_cosnt = false;
-	float initialW;
-	for (auto it = hmp.begin(); it != hmp.end(); ++it)
-	{
-		int h = it->second.height;
-		int w = it->second.width;
-		area += (h*w);
-	}
-	for (auto it = smp.begin(); it != smp.end(); ++it)
-	{
-		int a = it->second.area;
-		area += a;
-	}
-	cout << "area:" << area << "sqrt" << sqrt(area);
-	initialW = sqrt(area);
-	W = sqrt(area);
-	cout << "W:" << W;
 
-	IloEnv env;
-	
-		IloModel model(env);
-		IloNumVarArray vars(env);
-		IloNumVar a(env);
-		vars.add(IloNumVar(env));
-		model.add(IloMinimize(env, vars[0]));
-		IloRangeArray c;
-		for (int i = 1; i <= hard_count; i++)
-		{
-			
-			vars.add(IloNumVar(env));
-			vars.add(IloNumVar(env));
-			model.add(vars[i] >= 0);
-			myfile << "x" << i << " >= 0" <<";"<< endl;
-			model.add(vars[i + 1] >= 0);
-			myfile << "y" << i << " >= 0" << ";" << endl;
-			model.add(vars[i] + hmp[i - 1].width <= W);
-			myfile << "x" << i << " + "  << hmp[i - 1].width <<" <= " << W << ";" << endl;
-			model.add(vars[i + 1] + hmp[i - 1].height <= vars[0]);
-			myfile << "y" << i << " + " << hmp[i - 1].height <<  " <= " << "Y" << ";" << endl;
-			cout << i << endl; 
-		}
-		int ct = hard_count;
-
-		for (int i = 1; i <= hard_count - 1; i++)
-			for (int j = i+1; j <= hard_count; j++)
-			{
-				vars.add(IloNumVar(env));
-				vars.add(IloNumVar(env));
-			
-				model.add(vars[i] +vars[i+2] * (hmp[i].height) + (1 - vars[i+2])*(hmp[i].width) <= vars[j] + W * (vars[ct] + vars[ct+1]));
-				myfile << "x" << i << " + " << hmp[i - 1].height << " z" << i << " + " << hmp[i - 1].width << " - " << hmp[i - 1].width << " z" << i << " <= " << "x" <<j << " + " << W << " x" <<i<<j << " + " << W << " y" << i << j << endl;
-				model.add(vars[i+1] + vars[i+2] * (hmp[i].width) + (1 - vars[i+2])*(hmp[i].height) <= vars[j+1] + W * (1 + vars[ct] - vars[ct+1]));
-				myfile << "y" << i << " + " << hmp[i - 1].width << " z" << i << " + " << hmp[i - 1].height << " - " << hmp[i - 1].height << " z" << i << " <= " << "y" << j << " + "<< W <<" + " << W << " x" << i << j << " - "<< W << " y" << i << j << endl;
-				model.add(vars[j] + vars[j+2] * (hmp[j].height) + (1 - vars[j+2])*(hmp[j].width) <= vars[i] + W * (1 - vars[ct] + vars[ct+1]));
-				myfile << "x" << j << " + " << hmp[j - 1].height << " z" << j << " + " << hmp[j - 1].width << " - " << hmp[j - 1].width << " z" << j << " <= " << "x" << i << " + " << W << " - "<< W << " x" << i << j << " + " << W << " y" << i << j << endl;
-				model.add(vars[j+1] + vars[j+2] * (hmp[j].width) + (1 - vars[j+2])*(hmp[j].height) <= vars[i+1] + W * (2 - vars[ct] - vars[ct+1]));
-				myfile << "y" << j << " + " << hmp[j - 1].width << " z" << j << " + " << hmp[j - 1].height << " - " << hmp[j - 1].height << " z" << i << " <= " << "y" << i << " + " << "2 "<< W << " - " << W << " x" << i << j << " - " << W << " y" << i << j << endl;
-				ct++;
-
-			}
-
-		
-		IloCplex cplex(model);
-		cplex.solve();
-		cout << cplex.getStatus();
-		if (cplex.getStatus() == IloAlgorithm::Optimal) {
-			IloNumArray vals(env);
-			
-		}
-	
-	env.end();
-}
 
 //ILOSTLBEGIN
 
