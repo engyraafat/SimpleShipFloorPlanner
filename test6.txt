@@ -1,0 +1,11 @@
+.soft_module A 2000
+.soft_module B 500
+.soft_module C 1000
+.soft_module D 3000
+.soft_module E 1600
+.soft_module F 700
+.soft_module G 800
+.soft_module H 1300
+
+
+.pins 26 2 2
