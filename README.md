@@ -1,10 +1,30 @@
 # SimpleShipFloorPlanner
-This floor planner optimizes based on area only without wiring.
 
-As an input, it takes a text file with three types of inputs: .hard_module , .soft_module and .pin.
+This Program implements a Chip Floor Planner that works with the following types of imputs:
+I/O Pads ( Type 1 Rectangles)
+Hard Modules ( Type 2 Rectangles)
+Soft Modules ( Type 3 Rectangles)
 
-.hard_module: it takes parameters in the following order: .hard_module name width height
+It uses the Analytical Approach in order to Minimize the Area of the Chip. 
+For the hard modules, it finds its location and whether it should be rotated. 
+For Soft modules, it finds their heights, widths and locations
+For I/O pads, it finds their locations
 
-.soft_module: it takes parameters in the following order: .soft_module name area
+Input Format:
+The input files follow the following format:
+For Hard Modules:
+.hard_module name width height 
+For Soft Modules:
+.soft_module  name  area
+For I/O pads:
+.pin  number_of_pins  width  height 
 
-.pins: it takes parameters in the following order: .pins count width height
+Output Format:
+The output files follow the following format:
+They report the total width, total height, total area, utilization , I/o Pad Locations.
+
+Hard Modules are reported in the following format:
+Name: x_position , y_position , rotated_or_not
+
+Soft Modules are reported in the following format:
+Name: x_position , y_position , width , height
